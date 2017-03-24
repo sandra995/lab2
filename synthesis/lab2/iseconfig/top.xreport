@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <report-views version="2.0" >
  <header>
-  <DateModified>2017-03-22T15:06:43</DateModified>
+  <DateModified>2017-03-24T09:38:02</DateModified>
   <ModuleName>top</ModuleName>
   <SummaryTimeStamp>2014-03-20T11:47:08</SummaryTimeStamp>
-  <SavedFilePath>C:/materija/RA29-2014/lab2/synthesis/lab2/iseconfig/top.xreport</SavedFilePath>
-  <ImplementationReportsDirectory>C:/materija/RA29-2014/lab2/synthesis/lab2\</ImplementationReportsDirectory>
+  <SavedFilePath>C:/materija/RA29-2014/New folder/lab2-tekst/synthesis/lab2/iseconfig/top.xreport</SavedFilePath>
+  <ImplementationReportsDirectory>C:/materija/RA29-2014/New folder/lab2-tekst/synthesis/lab2\</ImplementationReportsDirectory>
   <DateInitialized>2014-03-10T14:57:35</DateInitialized>
   <EnableMessageFiltering>false</EnableMessageFiltering>
  </header>

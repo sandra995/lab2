@@ -23,6 +23,8 @@ entity top is
   port (
     clk_i          : in  std_logic;
     reset_n_i      : in  std_logic;
+	 direct_mode_i : in std_logic;
+	 display_mode_i : in std_logic_vector(1 downto 0);
     -- vga
     vga_hsync_o    : out std_logic;
     vga_vsync_o    : out std_logic;
@@ -100,8 +102,6 @@ architecture rtl of top is
       red_o               : out std_logic_vector(7 downto 0);
       green_o             : out std_logic_vector(7 downto 0);
       blue_o              : out std_logic_vector(7 downto 0)
-			
-
     );
   end component;
   
@@ -132,7 +132,6 @@ architecture rtl of top is
   signal message_lenght      : std_logic_vector(MEM_ADDR_WIDTH-1 downto 0);
   signal graphics_lenght     : std_logic_vector(GRAPH_MEM_ADDR_WIDTH-1 downto 0);
   
-  signal direct_mode         : std_logic;
   --
   signal font_size           : std_logic_vector(3 downto 0);
   signal show_frame          : std_logic;
@@ -158,9 +157,9 @@ architecture rtl of top is
   signal dir_blue            : std_logic_vector(7 downto 0);
   signal dir_pixel_column    : std_logic_vector(10 downto 0);
   signal dir_pixel_row       : std_logic_vector(10 downto 0);
-    signal cnt : std_logic_vector(13 downto 0);
+	
+  signal cnt : std_logic_vector(13 downto 0);
   signal cnt2 : std_logic_vector(19 downto 0);
-		
 
 begin
 
@@ -173,8 +172,8 @@ begin
   graphics_lenght <= conv_std_logic_vector(MEM_SIZE*8*8, GRAPH_MEM_ADDR_WIDTH);
   
   -- removed to inputs pin
-  direct_mode <= '0';
-  display_mode     <= "01";  -- 01 - text mode, 10 - graphics mode, 11 - text & graphics
+  --direct_mode <= '0';
+  --display_mode     <= "10";  -- 01 - text mode, 10 - graphics mode, 11 - text & graphics
   
   font_size        <= x"1";
   show_frame       <= '1';
@@ -216,14 +215,14 @@ begin
     clk_i              => clk_i,
     reset_n_i          => reset_n_i,
     --
-    direct_mode_i      => direct_mode,
+    direct_mode_i      => direct_mode_i,
     dir_red_i          => dir_red,
     dir_green_i        => dir_green,
     dir_blue_i         => dir_blue,
     dir_pixel_column_o => dir_pixel_column,
     dir_pixel_row_o    => dir_pixel_row,
     -- cfg
-    display_mode_i     => display_mode,  -- 01 - text mode, 10 - graphics mode, 11 - text & graphics
+    display_mode_i     => display_mode_i,  -- 01 - text mode, 10 - graphics mode, 11 - text & graphics
     -- text mode interface
     text_addr_i        => char_address,
     text_data_i        => char_value,
@@ -251,6 +250,7 @@ begin
     blue_o             => blue_o     
   );
   
+  
 
   -- na osnovu signala iz vga_top modula dir_pixel_column i dir_pixel_row realizovati logiku koja genereise
   --dir_red
@@ -258,31 +258,31 @@ begin
   --dir_blue
  
  
-   --dir_red <=  x"ff" when dir_pixel_column >= 0 and dir_pixel_column < H_RES/8 else
-	--				x"ff" when dir_pixel_column >= H_RES/8 and dir_pixel_column < 2*H_RES/8 else
-		--			x"ff" when dir_pixel_column >= 4*H_RES/8 and dir_pixel_column < 5*H_RES/8 else
---		x"ff" when dir_pixel_column >= 5*H_RES/8 and dir_pixel_column < 6*H_RES/8 else
-		--			x"00";
+   dir_red <=  x"ff" when dir_pixel_column >= 0 and dir_pixel_column < H_RES/8 else
+					x"ff" when dir_pixel_column >= H_RES/8 and dir_pixel_column < 2*H_RES/8 else
+					x"ff" when dir_pixel_column >= 4*H_RES/8 and dir_pixel_column < 5*H_RES/8 else
+		x"ff" when dir_pixel_column >= 5*H_RES/8 and dir_pixel_column < 6*H_RES/8 else
+					x"00";
 					
-	--dir_green <=   x"ff" when dir_pixel_column >= 0 and dir_pixel_column < H_RES/8 else
-	--					x"ff" when dir_pixel_column >= H_RES/8 and dir_pixel_column < 2*H_RES/8 else
-	--					x"ff" when dir_pixel_column >= 2*H_RES/8 and dir_pixel_column < 3*H_RES/8 else
-	--					x"ff" when dir_pixel_column >= 3*H_RES/8 and dir_pixel_column < 4*H_RES/8 else
-	--					x"00";
+	dir_green <=   x"ff" when dir_pixel_column >= 0 and dir_pixel_column < H_RES/8 else
+						x"ff" when dir_pixel_column >= H_RES/8 and dir_pixel_column < 2*H_RES/8 else
+						x"ff" when dir_pixel_column >= 2*H_RES/8 and dir_pixel_column < 3*H_RES/8 else
+						x"ff" when dir_pixel_column >= 3*H_RES/8 and dir_pixel_column < 4*H_RES/8 else
+						x"00";
 						
-	--dir_blue <= x"ff" when dir_pixel_column >= 0 and dir_pixel_column < H_RES/8 else
-	--				x"ff" when dir_pixel_column >= 2*H_RES/8 and dir_pixel_column < 3*H_RES/8 else
-	--				x"ff" when dir_pixel_column >= 4*H_RES/8 and dir_pixel_column < 5*H_RES/8 else
-	--				x"ff" when dir_pixel_column >= 6*H_RES/8 and dir_pixel_column < 7*H_RES/8 else
-	--				x"00";
+	dir_blue <= x"ff" when dir_pixel_column >= 0 and dir_pixel_column < H_RES/8 else
+					x"ff" when dir_pixel_column >= 2*H_RES/8 and dir_pixel_column < 3*H_RES/8 else
+					x"ff" when dir_pixel_column >= 4*H_RES/8 and dir_pixel_column < 5*H_RES/8 else
+					x"ff" when dir_pixel_column >= 6*H_RES/8 and dir_pixel_column < 7*H_RES/8 else
+					x"00";
  
  
  
  
  
-  -- koristeci signale realizovati logiku koja pise po TXT_MEM
-  --char_address
-  --char_value
+--   koristeci signale realizovati logiku koja pise po TXT_MEM
+ --char_address
+ -- char_value
   --char_we
   
   char_we <= '1';
@@ -369,6 +369,84 @@ begin
   --pixel_address
   --pixel_value
   --pixel_we
+   
+  pixel_we <= '1';
+
+  
+  	pixel_address <= (cnt2);
+  process(cnt2) begin
+		if(cnt2 = 700)then
+			pixel_value <= "11111111111111110000000000000000";
+		
+		elsif(cnt2 = 720)then
+			pixel_value <= "11111111111111110000000000000000";
+		
+		elsif(cnt2 = 740)then
+			pixel_value <= "11111111111111110000000000000000";
+		
+		elsif(cnt2 = 760)then
+			pixel_value <= "11111111111111110000000000000000";
+		
+		elsif(cnt2 = 780)then
+			pixel_value <= "11111111111111110000000000000000";
+		
+		elsif(cnt2 = 800)then
+			pixel_value <= "11111111111111110000000000000000";
+			
+		elsif(cnt2 = 820)then
+			pixel_value <= "11111111111111110000000000000000";
+		
+		elsif(cnt2 = 840)then
+			pixel_value <= "11111111111111110000000000000000";
+			
+		elsif(cnt2 = 860)then
+			pixel_value <= "11111111111111110000000000000000";
+		
+		elsif(cnt2 = 880)then
+			pixel_value <= "11111111111111110000000000000000";
+		
+		elsif(cnt2 = 900)then
+			pixel_value <= "11111111111111110000000000000000";
+		
+		elsif(cnt2 = 920)then
+			pixel_value <= "11111111111111110000000000000000";
+		
+		elsif(cnt2 = 940)then
+			pixel_value <= "11111111111111110000000000000000";
+			
+		elsif(cnt2 = 960)then
+			pixel_value <= "11111111111111110000000000000000";
+			
+		elsif(cnt2 = 980)then
+			pixel_value <= "11111111111111110000000000000000";
+			
+		elsif(cnt2 = 1000)then
+			pixel_value <= "11111111111111110000000000000000";
+			
+		elsif(cnt2 = 1020)then
+			pixel_value <= "11111111111111110000000000000000";
+			
+		elsif(cnt2 = 1040)then
+			pixel_value <= "11111111111111110000000000000000";
+		
+		else
+			pixel_value <= "00000000000000000000000000000000";
+	
+		end if;	
+  end process;
+  
+  process(pix_clock_s)begin
+		if(rising_edge(pix_clock_s))then
+			if(cnt2 = 1199)then
+				cnt2 <= (others => '0');
+			else
+				cnt2 <= cnt2 + 1;
+			end if;
+		end if;
+  end process;
+  
+  
+  
   
   
 end rtl;
